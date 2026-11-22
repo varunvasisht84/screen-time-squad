@@ -37,5 +37,8 @@ export const saveSession = (session) => post('sessions', session);
 // Set the points back to zero.
 export const resetPoints = () => post('rewards/reset');
 
+// Reset one stat card to 0 (todayMinutes, streakDays, bestSessionMinutes, sessionsToday).
+export const resetStat = (field) => post('downtime/reset', { field });
+
 // Spend 1,000 points on a real-world reward.
 export const redeemPrize = (prizeId) => post('rewards/redeem', { prizeId });

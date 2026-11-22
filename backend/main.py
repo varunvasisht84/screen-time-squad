@@ -60,6 +60,10 @@ class Redeem(BaseModel):
     prizeId: int
 
 
+class ResetStat(BaseModel):
+    field: str
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
@@ -72,6 +76,15 @@ def squad():
 
 @app.get("/api/downtime")
 def downtime():
+    return DOWNTIME
+
+
+@app.post("/api/downtime/reset")
+def reset_stat(body: ResetStat):
+    """The reset button on a stat card: sets that one number back to 0."""
+    if body.field not in DOWNTIME:
+        raise HTTPException(404, "No such stat")
+    DOWNTIME[body.field] = 0
     return DOWNTIME
 
 

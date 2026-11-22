@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, CircularProgress, Container, CssBaseline, Grid, ThemeProvider } from '@mui/material';
 import makeTheme from './theme.js';
-import { getData, redeemPrize, resetPoints, saveSession } from './api.js';
+import { getData, redeemPrize, resetPoints, resetStat, saveSession } from './api.js';
 import { MIN_MINUTES, pointsFor } from './rules.js';
 import Header from './components/Header.jsx';
 import SquadBar from './components/SquadBar.jsx';
@@ -109,6 +109,12 @@ export default function App() {
     resetPoints();
   };
 
+  // Reset one stat card (focus time, streak, best session, case sessions) to 0.
+  const onResetStat = (key) => {
+    setStats((s) => ({ ...s, [key]: 0 }));
+    resetStat(key);
+  };
+
   const onRedeem = (prize) => {
     if (rewards.points < rewards.goal) return;
     setRewards((r) => ({ ...r, points: r.points - r.goal }));
@@ -162,7 +168,7 @@ export default function App() {
               />
             </Grid>
             <Grid item xs={12}>
-              <StatsRow stats={stats} liveMinutes={inCase && reachedMin ? minutes : 0} />
+              <StatsRow stats={stats} liveMinutes={inCase && reachedMin ? minutes : 0} onReset={onResetStat} />
             </Grid>
           </Grid>
         )}
