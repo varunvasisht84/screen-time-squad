@@ -9,6 +9,7 @@ import TimerCard from './components/TimerCard.jsx';
 import StatsRow from './components/StatsRow.jsx';
 import RewardsCard from './components/RewardsCard.jsx';
 import Celebration from './components/Celebration.jsx';
+import WelcomeDialog from './components/WelcomeDialog.jsx';
 
 const DEFAULT_SPEED = 100; // fast for the demo: 30 min = 18 s, 1 hour = 36 s
 
@@ -29,6 +30,9 @@ export default function App() {
     setMode(next);
     try { localStorage.setItem('sts-theme', next); } catch { /* ignore */ }
   };
+
+  // ---- Welcome overlay, shown every time the app opens ----
+  const [welcomeOpen, setWelcomeOpen] = useState(true);
 
   // ---- Data from the backend (or demo data) ----
   const [stats, setStats] = useState(null);
@@ -173,6 +177,7 @@ export default function App() {
           </Grid>
         )}
       </Container>
+      <WelcomeDialog open={welcomeOpen} onClose={() => setWelcomeOpen(false)} />
       {celebrate && (
         <Celebration key={celebrate.id} emoji={celebrate.emoji} message={celebrate.message}
           onDone={() => setCelebrate(null)} />
