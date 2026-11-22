@@ -3,14 +3,15 @@ import {
   Box, Button, Card, CardContent, CircularProgress, Stack, ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material';
 import { keyframes } from '@emotion/react';
+import { MIN_MINUTES, durationLabel, pointsFor } from '../rules.js';
 
 const wobble = keyframes`0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}`;
 
 const warmUpJokes = [
   'Stay strong! The phone is just napping 😴',
-  'No peeking! Rewards start at 10 min 🙈',
+  'No peeking! First 10 points at 30 min 🙈',
   'Your thumbs are stretching… 👍',
-  'Almost there, don’t open the box! 📦',
+  'Bzzz? Nope. Blocked. 🔕',
 ];
 
 const jokes = [
@@ -28,46 +29,43 @@ export const formatTime = (s) => {
   return s >= 3600 ? `${Math.floor(s / 3600)}:${parts.join(':')}` : parts.join(':');
 };
 
+const MIN_SECONDS = MIN_MINUTES * 60;
+
 export default function TimerCard({
-  inBox, seconds, minSeconds, badges, next, speed, onSpeed, onToggle, lastSession,
+  inCase, seconds, sessionPoints, nextMilestone, buzzes, speed, onSpeed, onToggle, lastSession,
 }) {
-  const reachedMin = seconds >= minSeconds;
+  const reachedMin = seconds >= MIN_SECONDS;
   const list = reachedMin ? jokes : warmUpJokes;
   const [joke, setJoke] = useState(0);
   useEffect(() => {
-    if (!inBox) return undefined;
+    if (!inCase) return undefined;
     const id = setInterval(() => setJoke((j) => j + 1), 2500);
     return () => clearInterval(id);
-  }, [inBox]);
+  }, [inCase]);
 
-  // Before the minimum: count DOWN to 10:00. After it: count UP, ring fills toward the next badge.
+  // Before 30 min: count DOWN to the first points. After: count UP, ring fills to the next half hour.
   let bigTime;
   let caption;
   let progress;
-  if (!inBox) {
-    bigTime = formatTime(minSeconds);
-    caption = `minimum downtime`;
+  if (!inCase) {
+    bigTime = formatTime(MIN_SECONDS);
+    caption = 'to your first 10 pts';
     progress = 0;
   } else if (!reachedMin) {
-    bigTime = formatTime(minSeconds - seconds);
-    caption = 'to go until rewards start';
-    progress = (seconds / minSeconds) * 100;
+    bigTime = formatTime(MIN_SECONDS - seconds);
+    caption = 'until +10 pts';
+    progress = (seconds / MIN_SECONDS) * 100;
   } else {
     bigTime = formatTime(seconds);
-    caption = 'of downtime ✅';
-    const prev = [...badges].reverse().find((b) => seconds >= b.minutes * 60);
-    const from = prev ? prev.minutes * 60 : 0;
-    progress = next ? ((seconds - from) / (next.minutes * 60 - from)) * 100 : 100;
+    caption = 'of focus time ✅';
+    progress = ((seconds % 1800) / 1800) * 100;
   }
 
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ textAlign: 'center', p: { xs: 2, sm: 4 } }}>
-        <Typography variant="h6" sx={{
-          fontWeight: 700,
-          color: !inBox ? 'secondary.main' : reachedMin ? 'success.main' : 'warning.main',
-        }}>
-          {!inBox ? '📱 Phone is out!' : reachedMin ? '🎉 Minimum done! Downtime counts' : '🔒 Downtime started'}
+        <Typography variant="h6" sx={{ fontWeight: 700, color: inCase ? 'success.main' : 'secondary.main' }}>
+          {inCase ? '🔕 Focus mode ON · distractions blocked' : '📱 Phone is out!'}
         </Typography>
 
         <Box sx={{ position: 'relative', display: 'inline-flex', my: 3 }}>
@@ -80,8 +78,13 @@ export default function TimerCard({
             position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
           }}>
-            <Box sx={{ fontSize: 64, lineHeight: 1, animation: inBox ? `${wobble} 1.2s ease-in-out infinite` : 'none' }}>
-              {inBox ? '📦' : '📱'}
+            {/* The phone, snug in its case while the timer runs */}
+            <Box sx={{
+              fontSize: 44, lineHeight: 1, px: 1, py: 0.5, borderRadius: 3,
+              border: '4px solid', borderColor: inCase ? 'success.main' : 'transparent',
+              animation: inCase ? `${wobble} 1.2s ease-in-out infinite` : 'none',
+            }}>
+              📱
             </Box>
             <Typography sx={{ fontSize: 52, fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>
               {bigTime}
@@ -91,28 +94,28 @@ export default function TimerCard({
         </Box>
 
         <Typography variant="h6" sx={{ minHeight: 32 }}>
-          {inBox ? list[joke % list.length] : 'Put the phone in the box to start downtime!'}
+          {inCase ? list[joke % list.length] : 'Slide the phone into the case to start focusing!'}
         </Typography>
-        {inBox && next && (
+        {inCase && (
           <Typography color="text.secondary">
-            Next badge: {next.emoji} <b>{next.title}</b> at {next.minutes} min
+            🔕 {buzzes} buzzes blocked · This session: <b>{sessionPoints} pts</b> · Next:{' '}
+            {durationLabel(nextMilestone)} = {pointsFor(nextMilestone)} pts
           </Typography>
         )}
-        {inBox && !next && <Typography color="text.secondary">All badges collected! You legend 🏆</Typography>}
-        {!inBox && lastSession && (
+        {!inCase && lastSession && (
           <Typography color={lastSession.counted ? 'success.main' : 'warning.main'} sx={{ fontWeight: 600 }}>
             {lastSession.counted
-              ? `🏁 Great job! ${formatTime(lastSession.seconds)} of downtime · +${lastSession.points} pts 🎉`
-              : `😅 Too soon! Only ${formatTime(lastSession.seconds)}. Stay at least ${minSeconds / 60} min to earn points.`}
+              ? `🏁 You took back ${formatTime(lastSession.seconds)} of your time · +${lastSession.points} pts 🎉`
+              : `😅 Too soon! Only ${formatTime(lastSession.seconds)}. Stay ${MIN_MINUTES} min to earn 10 pts.`}
           </Typography>
         )}
 
-        <Button variant="contained" size="large" color={inBox ? 'secondary' : 'primary'} onClick={onToggle}
+        <Button variant="contained" size="large" color={inCase ? 'secondary' : 'primary'} onClick={onToggle}
           sx={{ mt: 3, px: 5, py: 1.5, fontSize: 20 }}>
-          {inBox ? '🙈 Take phone out' : '📦 Phone in the box'}
+          {inCase ? '🙈 Take phone out of case' : '📱 Slide phone into case'}
         </Button>
         <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
-          Tip: press <b>Space</b> to pretend the box sensor saw the phone
+          The case’s sensor starts the timer automatically. In this demo, the button (or <b>Space</b>) plays the sensor.
         </Typography>
 
         <Stack direction="row" spacing={1} sx={{ mt: 3, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -123,6 +126,10 @@ export default function TimerCard({
             <ToggleButton value={100}>🚀 100×</ToggleButton>
           </ToggleButtonGroup>
         </Stack>
+
+        <Typography sx={{ mt: 3, fontWeight: 600, color: 'primary.main' }}>
+          Put the phone away, earn your points, and take back your time. ⏳
+        </Typography>
       </CardContent>
     </Card>
   );

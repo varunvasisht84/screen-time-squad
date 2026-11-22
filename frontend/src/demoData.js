@@ -8,16 +8,19 @@ const demo = {
     sessionsToday: 2,
   },
   rewards: {
-    points: 240,
+    // Starts just below the goal, so one 1-hour session (+25) hits 1,000 on stage.
+    points: 975,
+    goal: 1000,
     badges: [
-      { id: 1, emoji: '🐣', title: 'Baby Steps', minutes: 10, bonus: 5 },
-      { id: 2, emoji: '🧃', title: 'Juice Break', minutes: 15, bonus: 10 },
-      { id: 3, emoji: '📚', title: 'Bookworm', minutes: 20, bonus: 20 },
-      { id: 4, emoji: '⚽', title: 'Ball Buddy', minutes: 30, bonus: 25 },
-      { id: 5, emoji: '🎨', title: 'Doodle Master', minutes: 45, bonus: 30 },
-      { id: 6, emoji: '🧘', title: 'Zen Ninja', minutes: 60, bonus: 50 },
-      { id: 7, emoji: '🌳', title: 'Tree Hugger', minutes: 90, bonus: 75 },
-      { id: 8, emoji: '🏆', title: 'Screen-Free Legend', minutes: 120, bonus: 100 },
+      { id: 1, emoji: '🐣', title: 'Focus Starter', minutes: 30 },
+      { id: 2, emoji: '🦸', title: 'Hour Hero', minutes: 60 },
+      { id: 3, emoji: '🧘', title: 'Zen Ninja', minutes: 90 },
+      { id: 4, emoji: '🏆', title: 'Screen-Free Legend', minutes: 120 },
+    ],
+    prizes: [
+      { id: 1, emoji: '🍦', title: 'Ice cream trip' },
+      { id: 2, emoji: '🎬', title: 'Movie night' },
+      { id: 3, emoji: '🛝', title: 'Park adventure' },
     ],
   },
 };

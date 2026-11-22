@@ -1,22 +1,30 @@
 # Capstone: Screen Time Squad 📵
 
-A school capstone demo app that helps kids cut down on screen time.
+*Other products punish you for using your phone. We reward you for living your life.*
 
 **The Squad:** Arham · Kainaa · Prisha · Shivaay · Viaan
 
 ## The idea
 
-The phone goes into a box (the hardware). As soon as it is inside, the phone is in
-**downtime**: the timer starts, and the kids earn points and badges while they stay
-off-screen. Take the phone out and the session is saved.
+Slide your phone into our case and the timer starts automatically, blocking
+distractions so you can focus. The connected app rewards the time away:
 
-In the browser demo, the **📦 Phone in the box** button (or the **Space** bar) stands in
-for the box's sensor. Downtime has a **10-minute minimum**: the timer counts down to it,
-and taking the phone out earlier earns nothing. After that the timer counts up and more
-badges unlock the longer the phone stays in (10 min up to 2 hours). The **Demo speed**
-switch (🐢 Real / 🐇 10× / 🚀 100×) starts at **100×**, so the 10-minute minimum passes in
-6 seconds and the 2-hour badge in about 72 seconds during a presentation.
-**🔄 Reset points** sets the squad points back to zero before a fresh demo.
+| Time away  | Points |
+|------------|--------|
+| 30 minutes | 10     |
+| 1 hour     | 25     |
+| 1½ hours   | 35     |
+| 2 hours    | 50     |
+
+Hit **1,000 points** and redeem a real-world reward (🍦 ice cream, 🎬 movie night,
+🛝 park adventure). Taking the phone out before 30 minutes earns nothing.
+
+### Demo tips
+
+- The **📱 Slide phone into case** button (or the **Space** bar) plays the case's sensor.
+- **Demo speed** starts at **🚀 100×**: 30 minutes passes in 18 seconds, 1 hour in 36 seconds.
+- Points start at **975**, so a 1-hour session (+25) reaches 1,000 and the reward picker appears.
+- **🔄 Reset points** sets the points back to zero.
 
 - **Frontend:** React + Material UI (Vite) in `frontend/`
 - **Backend:** FastAPI (Python) in `backend/`
@@ -26,9 +34,9 @@ switch (🐢 Real / 🐇 10× / 🚀 100×) starts at **100×**, so the 10-minut
 
 It's one page, with no tabs:
 
-- **Timer:** counts down the 10-minute minimum, then counts up, with a progress ring and funny messages
-- **Rewards:** squad points (10 per minute + badge bonuses, only after the minimum), 8 badges from 10 min to 2 hours with an emoji party each, and a reset button
-- **Stats:** downtime today, day streak, best session, box visits
+- **Timer:** focus mode with a blocked-buzzes counter; counts down to the first 30 minutes, then counts up
+- **Rewards:** points, a 1,000-point goal bar with a reward picker, stickers at 30 min / 1 hr / 1½ hr / 2 hr with an emoji party each, and a reset button
+- **Stats:** focus time today, day streak, best session, case sessions
 - **Theme switcher:** dark (midnight blue) by default, light on request (top-right button)
 
 > The live GitHub Pages site uses built-in demo data, because GitHub Pages can only host

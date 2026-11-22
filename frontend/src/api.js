@@ -34,5 +34,8 @@ async function post(path, body) {
 // Tell the backend a downtime session finished. Ignored if there is no backend.
 export const saveSession = (session) => post('sessions', session);
 
-// Set the squad points back to zero.
+// Set the points back to zero.
 export const resetPoints = () => post('rewards/reset');
+
+// Spend 1,000 points on a real-world reward.
+export const redeemPrize = (prizeId) => post('rewards/redeem', { prizeId });

@@ -2,10 +2,10 @@ import { Card, CardContent, Grid, Typography } from '@mui/material';
 
 export default function StatsRow({ stats, liveMinutes }) {
   const tiles = [
-    { emoji: '⏱️', label: 'Downtime today', value: `${stats.todayMinutes + liveMinutes} min` },
+    { emoji: '⏱️', label: 'Focus time today', value: `${stats.todayMinutes + liveMinutes} min` },
     { emoji: '🔥', label: 'Day streak', value: `${stats.streakDays} days` },
     { emoji: '🏅', label: 'Best session', value: `${Math.max(stats.bestSessionMinutes, liveMinutes)} min` },
-    { emoji: '📦', label: 'Box visits today', value: stats.sessionsToday },
+    { emoji: '📱', label: 'Case sessions today', value: stats.sessionsToday },
   ];
   return (
     <Grid container spacing={2}>
